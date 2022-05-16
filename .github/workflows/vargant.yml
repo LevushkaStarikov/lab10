@@ -23,6 +23,11 @@ jobs:
       - name: vagrant init
         run: vagrant init
         
+      - name: download plugins
+        run: |
+         vagrant plugin install vagrant-vmware-esxi
+         vagrant plugint install vagrant-vbguest
+        
       - name: add some skripts
         run: |
          cat > Vagrantfile <<EOF
