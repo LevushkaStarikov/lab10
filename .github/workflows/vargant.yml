@@ -24,7 +24,7 @@ jobs:
         run: vagrant init
         
       - name: download plugins
-        run:  vagrant plugint install vagrant-vbguest
+        run:  vagrant plugin install vagrant-vbguest
         
       - name: add some skripts
         run: |
