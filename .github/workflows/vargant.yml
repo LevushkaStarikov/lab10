@@ -4,31 +4,39 @@ on: [push]
 
 jobs:
   vagrant-up:
-    runs-on: macos-10.15
+    runs-on: macos-10.15 #Как я понял vagrant встроен в actions только у macOS-10.15 (по крайней мере об этом
+    #говорит человек вот здесь https://github.com/jonashackt/vagrant-github-actions) 
 
     steps:
       - uses: actions/checkout@v2
 
+
+#Без следующих строчек ничего вообще дальше рабтать не будет и как я понял это подгрузка боксов (гостевых виртуалок)
       - name: Cache Vagrant boxes
         uses: actions/cache@v2
         with:
           path: ~/.vagrant.d/boxes
           key: ${{ runner.os }}-vagrant-${{ hashFiles('Vagrantfile') }}
           restore-keys: |
-            ${{ runner.os }}-vagrant-
-
+            ${{ runner.os }}-vagrant- 
+        
+#версия вагранта
       - name: Show Vagrant version
         run: vagrant --version
         
+#создание новго пустого vagrantfile'а
       - name: vagrant init
         run: vagrant init -f -m
         
+#скачивание нужного плагина vagrant-vbguest, который автоматически обновляет гостевые дополениния и устанавливает их на гостевую систему
       - name: download plugins
         run:  vagrant plugin install vagrant-vbguest
         
+#это просто создание нужной папки
       - name: new folder
         run: mkdir shared
-        
+    
+#запись в vagrantfile команды для запуска скрипта 
       - name: add some skripts
         run: |
          cat > Vagrantfile <<EOF
@@ -44,6 +52,7 @@ jobs:
          SCRIPT
          EOF
          
+# Запись в конец vagrantfile нужной конфигурации вагранта и плагина vagrant-vbguest
       - name: configuration and plugin
         run: |
          cat >> Vagrantfile <<EOF
@@ -51,10 +60,12 @@ jobs:
          config.vagrant.plugins = ["vagrant-vbguest"]
          EOF
          
+#Указывем в vagrantfile нужную ОС виртуалки, настройки сети, связанные директории, тип виртуальной машины,
+# включаем граф. интерфейс, указываем сколько выделить оперативки, задаем оболчку
       - name: some settings
         run: |
          cat >> Vagrantfile <<EOF
-         config.vm.box = "bento/ubuntu-19.10"
+         config.vm.box = "bento/ubuntu-19.10" 
          config.vm.network "public_network"
          config.vm.synced_folder('shared', '/vagrant', type: 'rsync')
          config.vm.provider "virtualbox" do |vb|
@@ -65,22 +76,29 @@ jobs:
          config.ssh.extra_args = "-tt"
          end
          EOF
-         
+       
+ #Подтверждение/проверка 
       - name: validation
         run: vagrant validate
 
+#запуск вирутальной машины
       - name: Run vagrant up
         run: vagrant up
         
+#информация о гостевых портах 
       - name: port
         run: vagrant port
-        
+     
+#статус/состояние виртуальной системы
       - name: status
         run: vagrant status
         
+#подключение к машине по SSH
       - name: ssh
         run: vagrant ssh
         
+#snapshot - запись текущего состояния системы (list - список созраненных состояний, push - запись состояния в list
+# pop - удаление сохраненного состояния (обратная операция push)) 
       - name: snapshot
         run: | 
          vagrant snapshot list
@@ -88,7 +106,7 @@ jobs:
          vagrant snapshot list
          vagrant snapshot pop
         
+#выключение виртуальной машины 
       - name: shutting down 
         run: vagrant halt
         
-       
