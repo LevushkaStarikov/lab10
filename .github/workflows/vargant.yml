@@ -37,6 +37,31 @@ jobs:
          sudo chown -R developer /home/developer
          SCRIPT
          EOF
+         
+      - name: configuration and plugin
+        run: |
+         cat >> Vagrantfile <<EOF
+         Vagrant.configure("2") do |config|
+         config.vagrant.plugins = ["vagrant-vbguest"]
+         EOF
+         
+      - name: some settings
+        run: |
+         cat >> Vagrantfile <<EOF
+         config.vm.box = "bento/ubuntu-19.10"
+         config.vm.network "public_network"
+         config.vm.synced_folder('shared', '/vagrant', type: 'rsync')
+         config.vm.provider "virtualbox" do |vb|
+         vb.gui = true
+         vb.memory = "2048"
+         end
+         config.vm.provision "shell", inline: \$script, privileged: true
+         config.ssh.extra_args = "-tt"
+         end
+         EOF
+         
+      - name: validation
+        run: vagrant validate
 
       - name: Run vagrant up
         run: vagrant up
