@@ -1,0 +1,19 @@
+name: vagrant-up
+
+on: [push]
+
+jobs:
+  vagrant-up:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Show Vagrant version
+        run: vagrant --version
+        
+      - name: vagrant init
+        run: vagrant init
+
+      - name: Run vagrant up
+        run: vagrant up
