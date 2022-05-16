@@ -71,3 +71,24 @@ jobs:
 
       - name: Run vagrant up
         run: vagrant up
+        
+      - name: port
+        run: vagrant port
+        
+      - name: status
+        run: vagrant status
+        
+      - name: ssh
+        run: vagrant ssh
+        
+      - name: snapshot
+        run: | 
+         vagrant snapshot list
+         vagrant snapshot push
+         vagrant snapshot list
+         vagrant snapshot pop
+        
+      - name: shutting down 
+        run: vagrant halt
+        
+       
