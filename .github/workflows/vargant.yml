@@ -21,10 +21,13 @@ jobs:
         run: vagrant --version
         
       - name: vagrant init
-        run: vagrant init
+        run: vagrant init -f -m
         
       - name: download plugins
         run:  vagrant plugin install vagrant-vbguest
+        
+      - name: new folder
+        run: mkdir shared
         
       - name: add some skripts
         run: |
