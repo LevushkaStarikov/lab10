@@ -8,6 +8,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      
+      - name: vagrant download
+        run: install vagrant
 
       - name: Show Vagrant version
         run: vagrant --version
